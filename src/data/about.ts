@@ -44,20 +44,25 @@ export const credentials = [
 ] as const;
 
 /**
- * Two photographs, doing different jobs. The cut-out has a transparent
- * background, so it sits straight on the cream with no frame, which suits the
- * home page. The room shot carries context, a wall of books behind her, and
- * earns the space it takes on /about.
+ * Three photographs. Both surfaces show her in a real place rather than cut out
+ * of one: the room, with its wall of books, on the home page, and a session in
+ * progress on /about, so the two pages do not repeat the same picture a click
+ * apart. The alpha cut-out is kept for whenever a frameless treatment is wanted.
  */
 export const portraits = {
-  cutout: {
-    src: "/portrait/priya.webp",
-    width: 418,
-    height: 573,
-  },
   room: {
     src: "/portrait/priya-room.webp",
     width: 1000,
     height: 1333,
+  },
+  speaking: {
+    src: "/portrait/priya-speaking.webp",
+    width: 797,
+    height: 796,
+  },
+  cutout: {
+    src: "/portrait/priya.webp",
+    width: 418,
+    height: 573,
   },
 } as const;

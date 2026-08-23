@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
 import { DecorativeDivider } from "@/components/ui/DecorativeDivider";
+import { FramedPhoto } from "@/components/ui/FramedPhoto";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { credentials, mission, portraits, story, vision } from "@/data/about";
@@ -65,17 +66,15 @@ export default function AboutPage() {
         <section className="bg-cream-raised py-[clamp(2.5rem,5.5vw,4.5rem)]">
           <div className="container-page">
             <div className="mx-auto max-w-[48rem]">
-              <figure className="mb-8 md:float-right md:mb-6 md:ml-10 md:w-[19rem]">
-                <Image
-                  src={portraits.room.src}
-                  alt={`${site.founder.name} at work`}
-                  width={portraits.room.width}
-                  height={portraits.room.height}
-                  sizes="(min-width: 768px) 19rem, 100vw"
-                  className="h-auto w-full rounded-sm"
-                  priority
-                />
-              </figure>
+              <FramedPhoto
+                src={portraits.speaking.src}
+                alt={`${site.founder.name} speaking at a session`}
+                width={portraits.speaking.width}
+                height={portraits.speaking.height}
+                sizes="(min-width: 768px) 19rem, 100vw"
+                priority
+                className="mb-8 md:float-right md:mb-6 md:ml-10 md:w-[19rem]"
+              />
 
               {story.map((paragraph, index) => (
                 <p

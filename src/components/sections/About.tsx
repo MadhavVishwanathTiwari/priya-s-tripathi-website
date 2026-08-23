@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { ArrowRightIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
+import { FramedPhoto } from "@/components/ui/FramedPhoto";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { blurb, credentials, portraits } from "@/data/about";
@@ -10,10 +11,6 @@ import { site } from "@/data/site";
 /**
  * The handshake, not the biography: two paragraphs in her own voice beside the
  * portrait, with the full account a click away at /about.
- *
- * The cut-out photograph has a transparent background, so it sits straight on
- * the cream with no frame, the way the decorative artwork elsewhere does. A
- * framed box here would be the only hard edge on the page.
  */
 export function About() {
   return (
@@ -34,25 +31,13 @@ export function About() {
       <div className="container-page relative">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
           <Reveal className="mx-auto w-[15rem] sm:w-[17rem] lg:w-full lg:max-w-[21rem]">
-            <div className="relative">
-              {/* A soft bloom so the cut-out belongs to the page rather than
-                  floating above it. */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -inset-6 rounded-full bg-[radial-gradient(circle,var(--color-peach-soft),transparent_70%)] opacity-70 blur-2xl"
-              />
-              <Image
-                src={portraits.cutout.src}
-                alt={`${site.founder.name}, ${site.founder.title}`}
-                width={portraits.cutout.width}
-                height={portraits.cutout.height}
-                sizes="(min-width: 1024px) 21rem, 17rem"
-                /* The cut-out is cropped square at the hem; a short fade lets
-                   it dissolve into the cream the way the hero photograph does
-                   at its edges, instead of stopping on a ruled line. */
-                className="relative h-auto w-full [mask-image:linear-gradient(to_bottom,#000_84%,transparent)]"
-              />
-            </div>
+            <FramedPhoto
+              src={portraits.room.src}
+              alt={`${site.founder.name}, ${site.founder.title}`}
+              width={portraits.room.width}
+              height={portraits.room.height}
+              sizes="(min-width: 1024px) 21rem, 17rem"
+            />
           </Reveal>
 
           <div>
