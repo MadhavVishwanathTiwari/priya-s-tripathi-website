@@ -140,7 +140,13 @@ Mobile is composed deliberately rather than scaled down:
 
 ## Scope
 
-The homepage, /about, the blog and the CMS behind them. "Consultations" and
-"Learn More" still point at placeholder anchors, and the seeded articles are
-placeholder writing to be replaced or approved before launch. The testimonials
-are real.
+The homepage, /about, /services with a page per service, /contact, the blog and
+the CMS behind them. The seeded articles are placeholder writing, and the
+Astrology and Combined Analysis service copy is ours rather than hers (both are
+marked `copyApproved: false` in `src/data/services.ts`). Everything else,
+including the testimonials and the fees, is real.
+
+The enquiry form has no backend by design: it composes what you type into a
+WhatsApp message, with email as the fallback, because a form that posts into
+nothing is worse than no form. Wiring a provider later touches only the two
+handlers in `EnquiryForm`.

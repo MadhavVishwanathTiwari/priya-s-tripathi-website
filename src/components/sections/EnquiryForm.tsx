@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Field, Select, TextArea, TextInput } from "@/components/ui/fields";
 import { services } from "@/data/services";
@@ -67,6 +67,22 @@ export function EnquiryForm() {
   const formRef = useRef<HTMLFormElement>(null);
   /** Which channel took the details, so the confirmation can name it. */
   const [handedTo, setHandedTo] = useState<"WhatsApp" | "email" | null>(null);
+  /*
+    Service pages link here as /contact?service=vastu.
+
+    The field is left uncontrolled and set on the element itself rather than
+    through useSearchParams: that hook needs a Suspense boundary and turns the
+    whole page into request-time work, which is a lot to pay for a convenience
+    on one dropdown. This way the page stays static and the form is complete in
+    the HTML whether or not the script arrives.
+  */
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get("service");
+    const match = services.find((item) => item.slug === slug);
+    const field = formRef.current?.elements.namedItem("service");
+
+    if (match && field instanceof HTMLSelectElement) field.value = match.title;
+  }, []);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

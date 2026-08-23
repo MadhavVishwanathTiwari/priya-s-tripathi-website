@@ -81,7 +81,7 @@ export const site = {
 export const navigation = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Services", href: "/#services" },
+  { label: "Services", href: "/services" },
   { label: "Fees", href: "/#fees" },
   { label: "Testimonials", href: "/#testimonials" },
   { label: "Blog", href: "/blog" },

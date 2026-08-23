@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
@@ -38,8 +39,8 @@ export function FeeStructure() {
                   key={fee.service}
                   className={
                     index % 2 === 0
-                      ? "bg-fee-row/70 border-b border-line/70 last:border-b-0"
-                      : "border-b border-line/70 last:border-b-0"
+                      ? "group bg-fee-row/70 border-b border-line/70 transition-colors duration-200 last:border-b-0 hover:bg-peach-soft/60"
+                      : "group border-b border-line/70 transition-colors duration-200 last:border-b-0 hover:bg-peach-soft/40"
                   }
                 >
                   <td className="border-r border-line/60 px-1.5 py-4 align-middle sm:px-3">
@@ -56,7 +57,18 @@ export function FeeStructure() {
                     scope="row"
                     className="border-r border-line/60 px-2.5 py-4 text-left align-middle text-[0.82rem] font-normal leading-snug text-ink sm:px-4 sm:text-[0.87rem]"
                   >
-                    {fee.service}
+                    {/*
+                      The row is a link to the service it prices. The anchor
+                      wraps only the name rather than the whole row: a table row
+                      cannot legally contain one, and stretching it across the
+                      cells would swallow the price in the accessible name.
+                    */}
+                    <Link
+                      href={`/services/${fee.slug}`}
+                      className="transition-colors duration-200 group-hover:text-gold-deep"
+                    >
+                      {fee.service}
+                    </Link>
                     {fee.note ? (
                       <span className="mt-1 block text-[0.66rem] leading-snug text-ink-muted">
                         ({fee.note})
