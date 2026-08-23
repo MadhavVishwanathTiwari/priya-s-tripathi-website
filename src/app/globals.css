@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+/*
+  Shivoham Universal Sol — design tokens.
+  Colours are sampled from the supplied desktop reference and reconciled with the
+  brand gold (#CFA06A) stated on the icon reference sheet.
+*/
+@theme {
+  /* Warm cream / ivory base */
+  --color-cream: #fdf4ec;
+  --color-cream-raised: #fffaf6;
+  --color-cream-deep: #f7efe7;
+
+  /* Soft peach bands */
+  --color-band: #f8eadd;
+  --color-band-quote: #feeadf;
+  --color-band-footer: #f9e6db;
+  --color-peach-soft: #fbe9d8;
+
+  /* Accents */
+  --color-peach: #e8ab91;
+  --color-peach-deep: #de9a7e;
+  --color-gold: #cfa06a;
+  --color-gold-deep: #b98a5e;
+
+  /* Surfaces */
+  --color-card-cream: #f8efe5;
+  --color-card-rose: #fbe9e1;
+  --color-fee-row: #fde9db;
+  --color-fee-base: #fef9f3;
+
+  /* Ink & lines */
+  --color-ink: #332820;
+  --color-ink-soft: #5b4c42;
+  --color-ink-muted: #75675e;
+  --color-line: #e8d9cc;
+  --color-line-soft: #f0e3d7;
+
+  /* Type */
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-allura), cursive;
+
+  /* Fluid display sizes */
+  --text-hero: clamp(2.75rem, 6.6vw, 5.15rem);
+  --text-display: clamp(1.75rem, 3.4vw, 2.5rem);
+  --text-quote: clamp(1.1rem, 1.85vw, 1.45rem);
+
+  /* Layout-driven breakpoint below Tailwind's defaults */
+  --breakpoint-xs: 30rem;
+}
+
+/* This design is light-only; never inherit the OS dark scheme. */
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  /* Decorative art is clipped by its own containers; this is the final guard. */
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+}
+
+::selection {
+  background-color: var(--color-peach-soft);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold-deep);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 82.5rem; /* 1320px */
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 4rem);
+}
+
+/* Uppercase eyebrows, nav and small labels */
+@utility tracked {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@utility tracked-wide {
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+/*
+  Hero photograph blends into the page rather than sitting in a hard-edged box.
+  Measured from the reference: a ~200px horizontal feather on desktop.
+*/
+@utility hero-fade-x {
+  background: linear-gradient(
+    to right,
+    var(--color-cream) 0%,
+    color-mix(in srgb, var(--color-cream) 94%, transparent) 12%,
+    color-mix(in srgb, var(--color-cream) 55%, transparent) 30%,
+    transparent 58%
+  );
+}
+
+/* Softens the top edge of the mobile hero photograph into the cream above it. */
+@utility hero-fade-y {
+  background: linear-gradient(
+    to bottom,
+    var(--color-cream) 0%,
+    color-mix(in srgb, var(--color-cream) 55%, transparent) 45%,
+    transparent 100%
+  );
+}
+
+/* Entrance animation — a single gentle fade + rise, nothing else. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/*
+  Testimonial marquee — a continuous left-to-right drift.
+  Two identical copies of the list sit side by side inside the track, and the
+  track slides from -50% back to 0, so the seam never lands on screen. The gap
+  between cards lives on each item's padding rather than on the flex `gap`,
+  which is what keeps that 50% an exact whole number of cards.
+*/
+.marquee {
+  --marquee-duration: 62s;
+  overflow: hidden;
+  /* Cards dissolve into the band at both edges instead of being sliced off. */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 7%,
+    #000 93%,
+    transparent 100%
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x var(--marquee-duration) linear infinite;
+}
+
+/* Let a reader stop the row to finish a quote. */
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-x {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  /*
+    The row stops moving below, so hand it back as a normal scrollable strip:
+    no edge fade, aligned to the page gutter, and without the duplicate pass
+    that only existed to hide the loop's seam.
+  */
+  .marquee {
+    overflow-x: auto;
+    mask-image: none;
+    padding-inline: clamp(1.25rem, 4vw, 4rem);
+  }
+
+  .marquee-track > [aria-hidden="true"] {
+    display: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

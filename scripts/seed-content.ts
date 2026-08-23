@@ -1,0 +1,228 @@
+/*
+  One-off: fills an empty Supabase project with the content the site shipped
+  with, converting each article's headed sections into the Tiptap document the
+  CMS and the public renderer both expect.
+
+    npx tsx scripts/seed-content.ts
+
+  Safe to re-run: rows are matched on slug (articles) and name plus quote
+  (testimonials), so nothing is duplicated. It talks to the database with the
+  service role key, which is why it lives in scripts/ and never in src/.
+*/
+
+import { createClient } from "@supabase/supabase-js";
+import { readFileSync } from "node:fs";
+import { basename, extname, join } from "node:path";
+
+import { posts } from "./seed-data/posts";
+import { testimonials } from "./seed-data/testimonials";
+
+// --- env ------------------------------------------------------------------
+
+/** Minimal .env.local reader: one dependency fewer for a script run once. */
+function loadEnv(file = ".env.local") {
+  try {
+    for (const line of readFileSync(file, "utf8").split("\n")) {
+      const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
+      if (!match) continue;
+      const value = match[2].replace(/^["']|["']$/g, "");
+      if (!process.env[match[1]]) process.env[match[1]] = value;
+    }
+  } catch {
+    // Fall through to whatever is already in the environment.
+  }
+}
+
+loadEnv();
+
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!url || !serviceKey) {
+  console.error(
+    "NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are needed. Copy .env.example to .env.local first.",
+  );
+  process.exit(1);
+}
+
+const supabase = createClient(url, serviceKey, {
+  auth: { persistSession: false },
+});
+
+// --- helpers --------------------------------------------------------------
+
+type TextNode = { type: "text"; text: string };
+type BlockNode = {
+  type: "heading" | "paragraph";
+  attrs?: { level: number };
+  content: TextNode[];
+};
+
+/** `{heading, paragraphs[]}` sections become an h2 followed by paragraphs. */
+function toTiptapDoc(
+  sections: { heading: string; paragraphs: string[] }[],
+): { type: "doc"; content: BlockNode[] } {
+  const content: BlockNode[] = [];
+
+  for (const section of sections) {
+    content.push({
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: section.heading }],
+    });
+
+    for (const paragraph of section.paragraphs) {
+      content.push({
+        type: "paragraph",
+        content: [{ type: "text", text: paragraph }],
+      });
+    }
+  }
+
+  return { type: "doc", content };
+}
+
+function readingMinutes(text: string) {
+  return Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / 200));
+}
+
+const MIME: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+};
+
+/**
+ * Puts a file from public/testimonials into the media bucket, at a stable path
+ * so re-running the seed overwrites rather than accumulating copies. Returns
+ * the object path the row stores, or null if the upload failed.
+ */
+async function uploadTestimonialPhoto(file: string) {
+  const extension = extname(file).toLowerCase();
+  const contentType = MIME[extension];
+  if (!contentType) {
+    console.error(`  no known type for ${file}; skipping the photo`);
+    return null;
+  }
+
+  const objectPath = `testimonials/seed/${basename(file)}`;
+  const { error } = await supabase.storage
+    .from("media")
+    .upload(objectPath, readFileSync(join("public", "testimonials", file)), {
+      contentType,
+      upsert: true,
+    });
+
+  if (error) {
+    console.error(`  could not upload ${file}: ${error.message}`);
+    return null;
+  }
+
+  return objectPath;
+}
+
+// --- seed -----------------------------------------------------------------
+
+async function main() {
+  const { data: categories, error: categoryError } = await supabase
+    .from("categories")
+    .select("slug, label");
+
+  if (categoryError || !categories?.length) {
+    console.error(
+      "No categories found. Run supabase/migrations/0001_init.sql and 0002_seed_categories.sql first.",
+    );
+    process.exit(1);
+  }
+
+  const slugForLabel = new Map(
+    categories.map((row) => [row.label as string, row.slug as string]),
+  );
+
+  for (const post of posts) {
+    const categorySlug = slugForLabel.get(post.category);
+    if (!categorySlug) {
+      console.error(`No category matches "${post.category}"; skipping ${post.slug}.`);
+      continue;
+    }
+
+    const body = toTiptapDoc(post.sections);
+    const words = post.sections
+      .flatMap((section) => [section.heading, ...section.paragraphs])
+      .join(" ");
+
+    const { error } = await supabase.from("posts").upsert(
+      {
+        slug: post.slug,
+        title: post.title,
+        excerpt: post.excerpt,
+        lead: post.lead,
+        body,
+        category_slug: categorySlug,
+        reading_minutes: readingMinutes(`${post.lead} ${words}`),
+        status: "published",
+        published_at: `${post.date}T09:00:00Z`,
+      },
+      { onConflict: "slug" },
+    );
+
+    console.log(error ? `  failed ${post.slug}: ${error.message}` : `  ${post.slug}`);
+  }
+
+  for (const testimonial of testimonials) {
+    const categorySlug = slugForLabel.get(testimonial.service);
+    if (!categorySlug) {
+      console.error(
+        `No category matches "${testimonial.service}"; skipping ${testimonial.name}.`,
+      );
+      continue;
+    }
+
+    const { data: existing } = await supabase
+      .from("testimonials")
+      .select("id")
+      .eq("name", testimonial.name)
+      .eq("quote", testimonial.quote)
+      .maybeSingle();
+
+    if (existing) {
+      console.log(`  ${testimonial.name} already present`);
+      continue;
+    }
+
+    const photoPath = testimonial.photo
+      ? await uploadTestimonialPhoto(testimonial.photo.file)
+      : null;
+
+    const { error } = await supabase.from("testimonials").insert({
+      quote: testimonial.quote,
+      name: testimonial.name,
+      location: testimonial.location,
+      category_slug: categorySlug,
+      photo_path: photoPath,
+      photo_alt: photoPath ? testimonial.photo?.alt : null,
+      // All three were published on the 2021 site, which is where consent
+      // comes from. See the note at the top of seed-data/testimonials.ts.
+      consent_on_file: true,
+      status: "published",
+      published_at: new Date().toISOString(),
+      sort_index: testimonials.indexOf(testimonial),
+    });
+
+    console.log(
+      error ? `  failed ${testimonial.name}: ${error.message}` : `  ${testimonial.name}`,
+    );
+  }
+
+  console.log(
+    "\nDone. The testimonials are the real ones recovered from the 2021 site, with\n" +
+      "their photographs. The articles are placeholder writing in her voice, so\n" +
+      "replace or approve those before the site goes live.",
+  );
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

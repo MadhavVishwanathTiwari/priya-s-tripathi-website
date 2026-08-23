@@ -1,0 +1,164 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+
+import { CalendarIcon, CloseIcon, MenuIcon } from "@/components/icons";
+import { Logo } from "@/components/layout/Logo";
+import { Button } from "@/components/ui/Button";
+import { navigation } from "@/data/site";
+import { cn } from "@/lib/utils";
+
+export function Header() {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  /*
+    Only the two real routes can be current — everything else in the nav is an
+    in-page anchor on the homepage. `/blog` stays marked while reading an
+    article, so the section a visitor is inside is always the highlighted one.
+  */
+  function isCurrent(href: string) {
+    if (href.includes("#")) return false;
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  // Close on Escape, and keep focus inside the panel while it is open.
+  useEffect(() => {
+    if (!open) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = panelRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled])',
+      );
+      if (!focusable?.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  return (
+    <header className="relative z-50 bg-cream-raised">
+      <div className="container-page flex items-center justify-between gap-6 py-4 lg:py-5">
+        <Logo showTagline />
+
+        <nav aria-label="Primary" className="hidden xl:block">
+          <ul className="flex items-center gap-7">
+            {navigation.map((item) => (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  aria-current={isCurrent(item.href) ? "page" : undefined}
+                  className={cn(
+                    "relative py-1 text-[0.82rem] transition-colors duration-200",
+                    isCurrent(item.href)
+                      ? "text-peach after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:bg-peach"
+                      : "text-ink-soft hover:text-gold-deep",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* Wrapped rather than given `hidden` directly: both `hidden` and the
+              button's own `inline-flex` are display utilities, so the winner
+              would depend on stylesheet order rather than on the class list. */}
+          <div className="hidden md:block">
+            <Button href="/#book" icon={<CalendarIcon className="h-4 w-4" />}>
+              Book Consultation
+            </Button>
+          </div>
+
+          <button
+            ref={toggleRef}
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            className="-mr-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink transition-colors duration-200 hover:bg-peach-soft/50 xl:hidden"
+          >
+            <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+            {open ? (
+              <CloseIcon className="h-6 w-6" />
+            ) : (
+              <MenuIcon className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* The consultation CTA stays visible on its own row, as in the mobile reference. */}
+      <div className="border-t border-line-soft/70 bg-cream-raised pb-4 pt-3 md:hidden">
+        <div className="container-page flex justify-center">
+          <Button href="/#book" icon={<CalendarIcon className="h-4 w-4" />}>
+            Book Consultation
+          </Button>
+        </div>
+      </div>
+
+      <div
+        id="mobile-menu"
+        ref={panelRef}
+        hidden={!open}
+        className="absolute inset-x-0 top-full border-y border-line-soft bg-cream-raised shadow-[0_18px_40px_-30px_rgba(90,70,55,0.5)] xl:hidden"
+      >
+        <nav aria-label="Primary" className="container-page py-2">
+          <ul className="flex flex-col divide-y divide-line-soft/80">
+            {navigation.map((item) => (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={isCurrent(item.href) ? "page" : undefined}
+                  className={cn(
+                    "flex min-h-12 items-center text-sm tracked transition-colors duration-200",
+                    isCurrent(item.href)
+                      ? "text-peach"
+                      : "text-ink-soft hover:text-gold-deep",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+
+      <span className="block h-px w-full bg-line-soft" />
+    </header>
+  );
+}
