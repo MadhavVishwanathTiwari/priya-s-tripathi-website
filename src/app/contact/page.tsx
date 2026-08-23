@@ -23,13 +23,16 @@ export const metadata: Metadata = {
   The direct channels, kept alongside the form rather than replaced by it.
   Plenty of people would simply rather tap a number than fill anything in, and
   these three are the shortest path for them.
+
+  Everything a visitor reads on this page is in her voice, as the rest of the
+  site is, so nothing here refers to her in the third person.
 */
 const channels = [
   {
     label: "WhatsApp",
     value: site.contact.phone,
     href: site.contact.whatsappHref,
-    note: "Usually the quickest way to reach her.",
+    note: "Usually the quickest way to reach me.",
     icon: socialIcons.whatsapp,
     external: true,
   },
@@ -132,7 +135,7 @@ export default function ContactPage() {
 
                 <div>
                   <p className="text-[0.68rem] tracked text-gold-deep">
-                    Where she is based
+                    Where I am based
                   </p>
                   <p className="mt-3 text-[0.88rem] leading-relaxed text-ink-soft">
                     {location.line}
@@ -162,7 +165,7 @@ export default function ContactPage() {
         >
           <div className="container-page">
             <SectionHeading id="direct-heading">
-              Or reach her directly
+              Or reach me directly
             </SectionHeading>
 
             <div className="mt-9 grid gap-4 sm:grid-cols-3 lg:mt-11 lg:gap-5">
@@ -207,7 +210,7 @@ export default function ContactPage() {
               <Reveal>
                 <article className="h-full rounded-sm bg-card-cream p-7 sm:p-8">
                   <h2 className="font-serif text-[1.25rem] font-normal text-ink">
-                    Writing to her directly?
+                    Writing to me directly?
                   </h2>
                   <p className="mt-3 text-[0.85rem] text-ink-muted">
                     If you skip the form, please include:
@@ -229,7 +232,7 @@ export default function ContactPage() {
                     Follow along
                   </h2>
                   <p className="mt-3 text-[0.85rem] text-ink-muted">
-                    Where she posts between consultations.
+                    Where I post between consultations.
                   </p>
                   <ul className="mt-5 flex items-center gap-3">
                     {site.social.map((item) => {

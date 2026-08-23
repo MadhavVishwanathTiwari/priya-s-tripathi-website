@@ -78,7 +78,7 @@ export default function ServicesPage() {
               </h2>
               <p className="mx-auto mt-3 max-w-md text-pretty text-[0.9rem] leading-relaxed text-ink-muted">
                 Most people arrive with a situation rather than a service.
-                Describe it and she will tell you which reading answers it, or
+                Describe it and I will tell you which reading answers it, or
                 whether one is needed at all.
               </p>
 

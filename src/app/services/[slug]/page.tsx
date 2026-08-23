@@ -190,8 +190,8 @@ export default async function ServicePage({ params }: ServiceProps) {
 
                 <div className="rounded-sm border border-gold/30 p-6 text-center sm:p-7">
                   <p className="text-pretty text-[0.88rem] leading-relaxed text-ink-soft">
-                    Tell her what you are facing and she will say what this
-                    would involve for you.
+                    Tell me what you are facing and I will say what this would
+                    involve for you.
                   </p>
                   <Button
                     href={`/contact?service=${service.slug}`}
