@@ -81,6 +81,10 @@ How it hangs together:
 - **Publishing needs no deploy.** The reads in `src/lib/content` are `use cache`
   scopes tagged `posts`, `post:<slug>` and `testimonials`; saving in the admin
   calls `updateTag`, and the page rebuilds on the next request.
+- **Writes that bypass the admin need a nudge.** The seed script, an edit in the
+  Supabase table editor or a restored backup leave the cache untouched. `POST
+  /api/revalidate` with the `CRON_SECRET` bearer token drops all three content
+  tags; the seed script calls it when `SITE_URL` is set.
 - **A testimonial cannot be published** without the written-permission box
   ticked. That is a database constraint, not a UI nicety.
 
