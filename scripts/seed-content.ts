@@ -122,6 +122,44 @@ async function uploadTestimonialPhoto(file: string) {
   return objectPath;
 }
 
+/**
+ * The site caches its content until something invalidates it, and writing
+ * straight to Postgres like this tells it nothing. Ping the revalidate route so
+ * the seeded rows actually appear. Skipped, with a note, when the site address
+ * is not configured.
+ */
+async function refreshSiteCache() {
+  const site = process.env.SITE_URL;
+  const secret = process.env.CRON_SECRET;
+
+  if (!site || !secret) {
+    console.log(
+      "\nSet SITE_URL and CRON_SECRET to have the site's cache refreshed\n" +
+        "automatically. Without it the new rows appear on the next deploy or\n" +
+        "daily revalidation.",
+    );
+    return;
+  }
+
+  try {
+    const response = await fetch(`${site}/api/revalidate`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${secret}` },
+    });
+    console.log(
+      response.ok
+        ? "\nSite cache refreshed."
+        : `\nCould not refresh the site cache: ${response.status}`,
+    );
+  } catch (cause) {
+    console.log(
+      `\nCould not reach the site to refresh its cache: ${
+        cause instanceof Error ? cause.message : "unknown failure"
+      }`,
+    );
+  }
+}
+
 // --- seed -----------------------------------------------------------------
 
 async function main() {
@@ -214,6 +252,8 @@ async function main() {
       error ? `  failed ${testimonial.name}: ${error.message}` : `  ${testimonial.name}`,
     );
   }
+
+  await refreshSiteCache();
 
   console.log(
     "\nDone. The testimonials are the real ones recovered from the 2021 site, with\n" +
