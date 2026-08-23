@@ -23,12 +23,25 @@ type ArticleProps = {
   params: Promise<{ slug: string }>;
 };
 
+/*
+  Cache Components prerenders the route once per param returned here to prove
+  nothing inside it reaches for request-time data, and so it refuses an empty
+  list. A database-backed blog is legitimately empty on the day it launches, and
+  that is not a state the site should be unable to build in, so a placeholder
+  stands in: the page turns it into a 404 the same way it would any unknown
+  slug, and the moment something is published the real slugs take over.
+*/
+const NO_ARTICLES_YET = "no-articles-yet";
+
 /**
  * Everything published at build time is prerendered. A post published later is
  * rendered on first request and then cached, so a publish needs no deploy.
  */
 export async function generateStaticParams() {
   const slugs = await getPublishedSlugs();
+
+  if (slugs.length === 0) return [{ slug: NO_ARTICLES_YET }];
+
   return slugs.map((slug) => ({ slug }));
 }
 
