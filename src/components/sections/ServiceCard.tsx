@@ -12,6 +12,11 @@ import { cn } from "@/lib/utils";
  * `h-full` makes the card fill its grid cell rather than its own content, so a
  * two-line title like "Combined Analysis" no longer leaves the card taller than
  * its neighbours; `mt-auto` then keeps every "Learn More" on the same baseline.
+ *
+ * The whole card is the hit area: the "Learn More" anchor is stretched across
+ * it, because that is where people aim. It stays a single link with the title
+ * in its accessible name, so a screen reader still hears one clear destination
+ * rather than a card-sized anonymous target.
  */
 export function ServiceCard({
   service,
@@ -23,7 +28,7 @@ export function ServiceCard({
   return (
     <article
       className={cn(
-        "group flex h-full gap-4 rounded-sm border border-transparent p-5 transition-all duration-300 sm:p-6 lg:flex-col lg:items-center lg:gap-0 lg:p-7 lg:text-center",
+        "group relative flex h-full gap-4 rounded-sm border border-transparent p-5 transition-all duration-300 sm:p-6 lg:flex-col lg:items-center lg:gap-0 lg:p-7 lg:text-center",
         "hover:-translate-y-0.5 hover:border-gold/25",
         index % 2 === 0 ? "bg-card-cream" : "bg-card-rose",
       )}
@@ -47,11 +52,12 @@ export function ServiceCard({
         </p>
 
         {/* Padding plus matching negative margin grows the tap target to ~44px
-            without changing the card's visual rhythm. */}
+            even before the stretch, which is what keyboard focus outlines and
+            the visible affordance are drawn around. */}
         <Link
           href={service.href}
           aria-label={`Learn more about ${service.title}`}
-          className="-mb-3 inline-flex items-center gap-1.5 py-3 text-[0.78rem] text-gold-deep transition-colors duration-200 hover:text-peach lg:mt-auto lg:pt-5"
+          className="-mb-3 inline-flex items-center gap-1.5 py-3 text-[0.78rem] text-gold-deep transition-colors duration-200 before:absolute before:inset-0 before:content-[''] hover:text-peach lg:mt-auto lg:pt-5"
         >
           Learn More
           <ArrowRightIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
