@@ -10,8 +10,7 @@ import { getPublishedPosts } from "@/lib/content/posts";
 import { site } from "@/data/site";
 
 const title = "Journal";
-const description =
-  "Notes on Vastu, astrology, numerology, healing and tarot from Priya S Tripathi. Written plainly, for anyone weighing a consultation.";
+const description = `Notes on Vastu, astrology, numerology, healing and tarot from ${site.founder.name}. Written plainly, for anyone weighing a consultation.`;
 
 export const metadata: Metadata = {
   title: `${title} | ${site.name}`,
