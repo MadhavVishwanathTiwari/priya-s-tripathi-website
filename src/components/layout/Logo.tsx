@@ -17,7 +17,7 @@ export function Logo({
 }) {
   return (
     <Link
-      href="#"
+      href="/"
       className={cn("group flex flex-col gap-1", className)}
       aria-label={`${site.name}, home`}
     >

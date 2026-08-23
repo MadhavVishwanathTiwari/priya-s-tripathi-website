@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-import { Callout, Field, TextInput } from "@/components/admin/fields";
+import { Callout, Field, TextInput } from "@/components/ui/fields";
 import { browserClient } from "@/lib/supabase/browser";
 
 /**

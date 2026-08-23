@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { StatusChip } from "@/components/admin/fields";
+import { StatusChip } from "@/components/ui/fields";
 import { serverClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
 

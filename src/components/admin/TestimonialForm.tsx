@@ -11,7 +11,7 @@ import {
   Select,
   TextArea,
   TextInput,
-} from "@/components/admin/fields";
+} from "@/components/ui/fields";
 import {
   deleteTestimonial,
   saveTestimonial,

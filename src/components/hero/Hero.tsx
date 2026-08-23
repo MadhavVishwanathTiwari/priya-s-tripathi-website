@@ -91,7 +91,7 @@ export function Hero() {
 
               <div className="pb-14 pt-9 lg:pb-0 lg:pt-11">
                 <Button
-                  href="#services"
+                  href="/#services"
                   trailing={<ArrowRightIcon className="h-4 w-4" />}
                 >
                   Explore Services

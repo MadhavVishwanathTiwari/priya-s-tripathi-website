@@ -1,7 +1,25 @@
+import type { CSSProperties } from "react";
+
 import { TestimonialCard } from "@/components/sections/TestimonialCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getPublishedTestimonials } from "@/lib/content/testimonials";
+
+/*
+  The track slides from -50% back to 0, so half of it is off screen at the
+  start. With only a handful of testimonials that half is narrower than the
+  viewport, and the row begins with the cards bunched at the left and nothing
+  filling the right. Repeating the list until each half comfortably outruns a
+  wide screen fixes it, whatever the CMS holds.
+*/
+const CARDS_PER_HALF = 6;
+
+/*
+  Seconds per card, which is how the duration stays honest as the count changes:
+  a fixed duration would make three testimonials crawl and twelve of them race.
+  17s across a 21.5rem card is a shade over 20px a second.
+*/
+const SECONDS_PER_CARD = 17;
 
 /**
  * Client words on a slow left-to-right drift. The row is full-bleed rather than
@@ -14,6 +32,12 @@ export async function Testimonials() {
 
   if (testimonials.length === 0) return null;
 
+  const repeats = Math.max(1, Math.ceil(CARDS_PER_HALF / testimonials.length));
+  // Twice the repeats: the animation assumes the second half is an exact copy
+  // of the first, which is what makes the loop seamless.
+  const passes = repeats * 2;
+  const duration = `${repeats * testimonials.length * SECONDS_PER_CARD}s`;
+
   return (
     <section
       id="testimonials"
@@ -25,24 +49,35 @@ export async function Testimonials() {
       </div>
 
       <Reveal className="mt-9 lg:mt-11">
-        <div className="marquee">
+        <div
+          className="marquee"
+          style={{ "--marquee-duration": duration } as CSSProperties}
+        >
           <div className="marquee-track">
             {/*
-              Two identical passes. The second is a purely visual tail that keeps
-              the loop seamless, so it is hidden from assistive tech.
+              Only the first pass is read out. The rest exist to keep the loop
+              seamless, and `globals.css` drops them entirely when a reader has
+              asked for reduced motion, leaving one honest scrollable row.
             */}
-            {[false, true].map((isClone) => (
+            {Array.from({ length: passes }, (_, pass) => (
               <ul
-                key={String(isClone)}
+                key={pass}
                 className="flex"
-                aria-hidden={isClone || undefined}
+                aria-hidden={pass > 0 || undefined}
               >
                 {testimonials.map((testimonial, index) => (
                   <li
                     key={testimonial.id}
                     className="w-[clamp(17rem,82vw,21.5rem)] shrink-0 pr-4 sm:pr-5"
                   >
-                    <TestimonialCard testimonial={testimonial} index={index} />
+                    <TestimonialCard
+                      testimonial={testimonial}
+                      /* Alternating tints run across the whole half rather than
+                         restarting each pass, so no two same-coloured cards
+                         meet at a seam. Taken modulo the repeats so both halves
+                         stay identical and the loop still hides its join. */
+                      index={(pass % repeats) * testimonials.length + index}
+                    />
                   </li>
                 ))}
               </ul>

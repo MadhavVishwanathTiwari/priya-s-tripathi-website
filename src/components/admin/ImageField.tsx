@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-import { Field, TextInput } from "@/components/admin/fields";
+import { Field, TextInput } from "@/components/ui/fields";
 import { browserClient } from "@/lib/supabase/browser";
 import { MEDIA_BUCKET } from "@/lib/supabase/env";
 import { cn } from "@/lib/utils";

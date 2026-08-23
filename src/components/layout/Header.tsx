@@ -17,6 +17,30 @@ export function Header() {
   const toggleRef = useRef<HTMLButtonElement>(null);
 
   /*
+    Clicking a hash link a second time does nothing on its own: the URL has not
+    changed, so there is no navigation for the router to act on and the browser
+    considers itself already there. Anyone who scrolls away and reaches for
+    "Services" again is left with a dead link, which is what this handles.
+  */
+  function scrollToHash(event: React.MouseEvent<HTMLAnchorElement>, href: string) {
+    const [path, hash] = href.split("#");
+    if (!hash || (path || "/") !== pathname) return;
+
+    const target = document.getElementById(hash);
+    if (!target) return;
+
+    event.preventDefault();
+    setOpen(false);
+    target.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+    // Keep the address bar in step without pushing a duplicate history entry.
+    window.history.replaceState(null, "", href);
+  }
+
+  /*
     Only the two real routes can be current — everything else in the nav is an
     in-page anchor on the homepage. `/blog` stays marked while reading an
     article, so the section a visitor is inside is always the highlighted one.
@@ -77,6 +101,7 @@ export function Header() {
               <li key={item.label}>
                 <Link
                   href={item.href}
+                  onClick={(event) => scrollToHash(event, item.href)}
                   aria-current={isCurrent(item.href) ? "page" : undefined}
                   className={cn(
                     "relative py-1 text-[0.82rem] transition-colors duration-200",
@@ -97,7 +122,7 @@ export function Header() {
               button's own `inline-flex` are display utilities, so the winner
               would depend on stylesheet order rather than on the class list. */}
           <div className="hidden md:block">
-            <Button href="/#book" icon={<CalendarIcon className="h-4 w-4" />}>
+            <Button href="/contact" icon={<CalendarIcon className="h-4 w-4" />}>
               Book Consultation
             </Button>
           </div>
@@ -123,7 +148,7 @@ export function Header() {
       {/* The consultation CTA stays visible on its own row, as in the mobile reference. */}
       <div className="border-t border-line-soft/70 bg-cream-raised pb-4 pt-3 md:hidden">
         <div className="container-page flex justify-center">
-          <Button href="/#book" icon={<CalendarIcon className="h-4 w-4" />}>
+          <Button href="/contact" icon={<CalendarIcon className="h-4 w-4" />}>
             Book Consultation
           </Button>
         </div>
@@ -141,7 +166,10 @@ export function Header() {
               <li key={item.label}>
                 <Link
                   href={item.href}
-                  onClick={() => setOpen(false)}
+                  onClick={(event) => {
+                    setOpen(false);
+                    scrollToHash(event, item.href);
+                  }}
                   aria-current={isCurrent(item.href) ? "page" : undefined}
                   className={cn(
                     "flex min-h-12 items-center text-sm tracked transition-colors duration-200",

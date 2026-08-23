@@ -2,7 +2,7 @@ import { io } from "next/cache";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { Callout } from "@/components/admin/fields";
+import { Callout } from "@/components/ui/fields";
 import { serviceRoleClient } from "@/lib/supabase/admin";
 import { serverClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";

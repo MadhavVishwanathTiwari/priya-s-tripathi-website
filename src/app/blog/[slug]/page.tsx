@@ -176,7 +176,7 @@ export default async function ArticlePage({ params }: ArticleProps) {
 
                   <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
                     <Button
-                      href="/#book"
+                      href="/contact"
                       icon={<CalendarIcon className="h-4 w-4" />}
                     >
                       Book Consultation

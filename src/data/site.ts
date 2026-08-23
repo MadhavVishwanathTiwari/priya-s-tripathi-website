@@ -33,7 +33,25 @@ export const site = {
   location: {
     line: "Palm Olympia, Sector 16C, Greater Noida West",
     region: "Gautam Buddha Nagar, Uttar Pradesh, India",
+    postalCode: "201009",
     note: "Consultations are held online or by telephone. Visits are by appointment.",
+    /*
+      A coordinate, not a place name, and that is a privacy decision. Searching
+      the society in an embed makes Google draw its own place card over the map,
+      printing a plot number off its business listing that reads exactly like a
+      flat number. A coordinate drops the card and leaves the map showing the
+      society, which is all this was ever meant to show.
+    */
+    mapPin: "28.6163979,77.4203518",
+    // 16 keeps the society's name on the tile; 17 crops the label out.
+    mapZoom: 16,
+    /*
+      The deep link is a different job: someone tapping it wants directions, and
+      a named place gives them a routable destination where a bare coordinate
+      gives them a dropped pin in a field.
+    */
+    mapQuery:
+      "Tower 12, Palm Olympia, Sector 16C, Greater Noida West, Gautam Buddha Nagar",
   },
   social: [
     {
@@ -64,9 +82,8 @@ export const navigation = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Services", href: "/#services" },
-  { label: "Consultations", href: "/#consultations" },
   { label: "Fees", href: "/#fees" },
   { label: "Testimonials", href: "/#testimonials" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/contact" },
 ] as const;

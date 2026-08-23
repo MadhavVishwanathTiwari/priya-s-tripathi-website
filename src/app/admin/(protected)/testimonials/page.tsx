@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { moveTestimonial } from "@/app/admin/(protected)/actions";
-import { StatusChip } from "@/components/admin/fields";
+import { StatusChip } from "@/components/ui/fields";
 import { serverClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Testimonials" };

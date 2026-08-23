@@ -12,7 +12,7 @@ import {
   Select,
   TextArea,
   TextInput,
-} from "@/components/admin/fields";
+} from "@/components/ui/fields";
 import { deletePost, savePost } from "@/app/admin/(protected)/actions";
 import { idleState, type FormState } from "@/components/admin/form-state";
 import type { Category } from "@/lib/content/categories";
