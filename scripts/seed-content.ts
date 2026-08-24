@@ -178,6 +178,28 @@ async function main() {
     categories.map((row) => [row.label as string, row.slug as string]),
   );
 
+  /*
+    `placeholder` arrives with migration 0004, which has to be run by hand in
+    the SQL editor. Seeding should not be blocked on that, so probe for the
+    column and drop the field where the migration has not been applied yet. The
+    seeded rows are filler either way; without the column the CMS simply cannot
+    show which ones.
+  */
+  const probe = await supabase.from("posts").select("placeholder").limit(1);
+  const marksPlaceholders = !probe.error;
+
+  if (!marksPlaceholders) {
+    console.log(
+      "\nNote: no `placeholder` column, so the seeded rows cannot be marked\n" +
+        "as filler in the CMS. Run supabase/migrations/0004_placeholder_flag.sql\n" +
+        "in the SQL editor and seed again to add the mark.\n",
+    );
+  }
+
+  /** Spreads `{ placeholder }` only where the column exists. */
+  const mark = (value: boolean) =>
+    marksPlaceholders ? { placeholder: value } : {};
+
   for (const post of posts) {
     const categorySlug = slugForLabel.get(post.category);
     if (!categorySlug) {
@@ -201,6 +223,7 @@ async function main() {
         reading_minutes: readingMinutes(`${post.lead} ${words}`),
         status: "published",
         published_at: `${post.date}T09:00:00Z`,
+        ...mark(post.placeholder),
       },
       { onConflict: "slug" },
     );
@@ -225,6 +248,14 @@ async function main() {
       .maybeSingle();
 
     if (existing) {
+      // Re-running after migration 0004 should still mark the filler, so the
+      // ordering of "seed" and "run the migration" does not matter.
+      if (marksPlaceholders) {
+        await supabase
+          .from("testimonials")
+          .update({ placeholder: testimonial.placeholder })
+          .eq("id", existing.id);
+      }
       console.log(`  ${testimonial.name} already present`);
       continue;
     }
@@ -240,12 +271,18 @@ async function main() {
       category_slug: categorySlug,
       photo_path: photoPath,
       photo_alt: photoPath ? testimonial.photo?.alt : null,
-      // All three were published on the 2021 site, which is where consent
-      // comes from. See the note at the top of seed-data/testimonials.ts.
+      /*
+        For the three real ones, consent comes from their publication on the
+        2021 site. For the invented ones there is no third party who could give
+        or withhold it, so this flag only satisfies the table constraint and
+        says nothing at all. `placeholder` below carries the truth, and it is
+        what the pre-launch cleanup deletes on.
+      */
       consent_on_file: true,
       status: "published",
       published_at: new Date().toISOString(),
       sort_index: testimonials.indexOf(testimonial),
+      ...mark(testimonial.placeholder),
     });
 
     console.log(
@@ -255,10 +292,19 @@ async function main() {
 
   await refreshSiteCache();
 
+  const invented =
+    testimonials.filter((item) => item.placeholder).length +
+    posts.filter((item) => item.placeholder).length;
+
   console.log(
-    "\nDone. The testimonials are the real ones recovered from the 2021 site, with\n" +
-      "their photographs. The articles are placeholder writing in her voice, so\n" +
-      "replace or approve those before the site goes live.",
+    "\nDone. Three testimonials are real, recovered from the 2021 site with\n" +
+      `their photographs. The other ${invented} rows are filler written by the\n` +
+      "build, so that every service page has three testimonials and three\n" +
+      "articles behind it rather than one lonely card in a grid of three.\n\n" +
+      "Replace or delete them before the site is advertised as a live\n" +
+      "business:\n\n" +
+      "  delete from public.testimonials where placeholder;\n" +
+      "  delete from public.posts        where placeholder;\n",
   );
 }
 
