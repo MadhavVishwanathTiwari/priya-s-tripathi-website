@@ -62,6 +62,7 @@ export type Database = {
           cover_path: string | null;
           cover_alt: string | null;
           reading_minutes: number;
+          placeholder: boolean;
           status: PostStatus;
           published_at: string | null;
           created_at: string;
@@ -78,6 +79,7 @@ export type Database = {
           cover_path?: string | null;
           cover_alt?: string | null;
           reading_minutes?: number;
+          placeholder?: boolean;
           status?: PostStatus;
           published_at?: string | null;
           created_at?: string;
@@ -94,6 +96,7 @@ export type Database = {
           cover_path?: string | null;
           cover_alt?: string | null;
           reading_minutes?: number;
+          placeholder?: boolean;
           status?: PostStatus;
           published_at?: string | null;
           created_at?: string;
@@ -112,6 +115,7 @@ export type Database = {
           photo_alt: string | null;
           consent_on_file: boolean;
           sort_index: number;
+          placeholder: boolean;
           status: PostStatus;
           published_at: string | null;
           created_at: string;
@@ -127,6 +131,7 @@ export type Database = {
           photo_alt?: string | null;
           consent_on_file?: boolean;
           sort_index?: number;
+          placeholder?: boolean;
           status?: PostStatus;
           published_at?: string | null;
           created_at?: string;
@@ -142,6 +147,7 @@ export type Database = {
           photo_alt?: string | null;
           consent_on_file?: boolean;
           sort_index?: number;
+          placeholder?: boolean;
           status?: PostStatus;
           published_at?: string | null;
           created_at?: string;

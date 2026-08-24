@@ -6,6 +6,34 @@ import { serverClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Testimonials" };
 
+/**
+ * Which rows are seeded filler. Asked for separately, and allowed to fail: the
+ * column arrives with migration 0004, and an admin list that will not load is a
+ * worse outcome than one that cannot yet tell filler from the real thing.
+ */
+async function placeholderIds(
+  supabase: Awaited<ReturnType<typeof serverClient>>,
+  table: "posts" | "testimonials",
+) {
+  const { data, error } = await supabase.from(table).select("id, placeholder");
+  if (error) return new Set<string>();
+  return new Set(
+    (data ?? [])
+      .filter((row) => row.placeholder)
+      .map((row) => row.id as string),
+  );
+}
+
+/** Says, in the CMS, what a comment in the seed data cannot. */
+function PlaceholderChip() {
+  return (
+    <span className="inline-flex items-center rounded-full border border-gold/45 px-2.5 py-1 text-[0.6rem] tracked text-gold-deep">
+      Placeholder
+    </span>
+  );
+}
+
+
 export default async function TestimonialsListPage() {
   const supabase = await serverClient();
 
@@ -16,6 +44,7 @@ export default async function TestimonialsListPage() {
     .order("created_at");
 
   const rows = testimonials ?? [];
+  const filler = await placeholderIds(supabase, "testimonials");
 
   return (
     <div className="flex flex-col gap-7">
@@ -67,6 +96,8 @@ export default async function TestimonialsListPage() {
                   {testimonial.quote}
                 </span>
               </Link>
+
+              {filler.has(testimonial.id) ? <PlaceholderChip /> : null}
 
               {!testimonial.consent_on_file ? (
                 <span className="text-[0.72rem] text-peach-deep">

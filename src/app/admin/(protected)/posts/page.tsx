@@ -6,6 +6,33 @@ import { formatDate } from "@/lib/utils";
 
 export const metadata = { title: "Articles" };
 
+/**
+ * Which rows are seeded filler. Asked for separately, and allowed to fail: the
+ * column arrives with migration 0004, and an admin list that will not load is a
+ * worse outcome than one that cannot yet tell filler from the real thing.
+ */
+async function placeholderIds(
+  supabase: Awaited<ReturnType<typeof serverClient>>,
+) {
+  const { data, error } = await supabase.from("posts").select("id, placeholder");
+  if (error) return new Set<string>();
+  return new Set(
+    (data ?? [])
+      .filter((row) => row.placeholder)
+      .map((row) => row.id as string),
+  );
+}
+
+/** Says, in the CMS, what a comment in the seed data cannot. */
+function PlaceholderChip() {
+  return (
+    <span className="inline-flex items-center rounded-full border border-gold/45 px-2.5 py-1 text-[0.6rem] tracked text-gold-deep">
+      Placeholder
+    </span>
+  );
+}
+
+
 export default async function PostsListPage() {
   const supabase = await serverClient();
 
@@ -21,6 +48,7 @@ export default async function PostsListPage() {
     .select("slug, label");
 
   const labels = new Map((categories ?? []).map((row) => [row.slug, row.label]));
+  const filler = await placeholderIds(supabase);
 
   return (
     <div className="flex flex-col gap-7">
@@ -57,6 +85,7 @@ export default async function PostsListPage() {
                 className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-4 transition-colors duration-200 hover:bg-cream-raised"
               >
                 <StatusChip status={post.status} />
+                {filler.has(post.id) ? <PlaceholderChip /> : null}
 
                 <span className="min-w-0 flex-1">
                   <span className="block font-serif text-[1.05rem] text-ink">
