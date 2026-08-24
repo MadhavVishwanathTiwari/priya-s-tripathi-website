@@ -71,13 +71,18 @@ export async function Footer() {
                 const Icon = socialIcons[item.icon];
                 return (
                   <li key={item.label}>
-                    <Link
+                    {/* A plain anchor, as on the contact page: these leave the
+                        site, so they should open in their own tab rather than
+                        being handed to the client router. */}
+                    <a
                       href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex h-11 w-11 items-center justify-center rounded-full border border-gold/40 text-gold transition-colors duration-200 hover:border-gold hover:bg-peach-soft/50 hover:text-gold-deep"
                     >
                       <Icon className="h-[1.15rem] w-[1.15rem]" />
                       <span className="sr-only">{item.label}</span>
-                    </Link>
+                    </a>
                   </li>
                 );
               })}
