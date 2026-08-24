@@ -127,8 +127,8 @@ export default async function ServicePage({ params }: ServiceProps) {
                     key={paragraph.slice(0, 40)}
                     className={
                       index === 0
-                        ? "text-pretty font-serif text-[clamp(1.15rem,2.2vw,1.35rem)] font-light leading-relaxed text-ink"
-                        : "mt-5 text-pretty text-[0.95rem] leading-[1.85] text-ink-soft"
+                        ? "text-pretty font-serif text-[clamp(1.05rem,1.9vw,1.2rem)] font-light leading-relaxed text-ink"
+                        : "mt-5 text-pretty text-[0.97rem] leading-[1.85] text-ink-soft"
                     }
                   >
                     {paragraph}
