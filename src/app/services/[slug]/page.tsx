@@ -61,7 +61,9 @@ export default async function ServicePage({ params }: ServiceProps) {
     getPublishedPosts(),
   ]);
 
-  const said = testimonials.filter((item) => item.service === service.title);
+  // Both joins are on the slug. Matching the display label instead would put a
+  // whole section one stray character away from silently rendering nothing.
+  const said = testimonials.filter((item) => item.serviceSlug === service.slug);
   const reading = posts
     .filter((post) => post.categorySlug === service.slug)
     .slice(0, 3);

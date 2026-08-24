@@ -37,6 +37,7 @@ export async function getPublishedTestimonials(): Promise<Testimonial[]> {
     name: row.name,
     location: row.location,
     service: categories.get(row.category_slug)?.label ?? row.category_slug,
+    serviceSlug: row.category_slug,
     photo:
       row.photo_path && row.photo_alt
         ? { url: mediaUrl(row.photo_path), alt: row.photo_alt }

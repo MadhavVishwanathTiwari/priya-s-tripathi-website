@@ -59,6 +59,8 @@ export type Testimonial = {
   location: string;
   /** Service label shown as the small gold caption. */
   service: string;
+  /** The stable join key. The label above is for display only. */
+  serviceSlug: string;
   photo: Media | null;
 };
 
