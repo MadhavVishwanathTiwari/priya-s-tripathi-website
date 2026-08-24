@@ -18,11 +18,10 @@ export const site = {
     phone: "+91 85270 18222",
     phoneHref: "tel:+918527018222",
     whatsappHref: "https://wa.me/918527018222",
-    /** Enquiries. `priya@` is her personal inbox, kept below for reference. */
-    email: "services@shivohamuniversalsol.com",
-    personalEmail: "priya@shivohamuniversalsol.com",
-    website: "www.shivohamuniversalsol.com",
-    websiteHref: "https://www.shivohamuniversalsol.com",
+    /** Enquiries. Everything the site links to goes here. */
+    email: "consultant@priyastripathi.co.in",
+    website: "www.priyastripathi.co.in",
+    websiteHref: "https://www.priyastripathi.co.in",
   },
   /*
     Where the practice is based. Consultations are remote by default, so
@@ -66,7 +65,7 @@ export const site = {
     },
     {
       label: "LinkedIn",
-      href: "https://linkedin.com/in/priya-tripathi-727b6923",
+      href: "https://www.linkedin.com/in/priya-swaroop-tripathi-727b6923/",
       icon: "linkedin",
     },
     { label: "WhatsApp", href: "https://wa.me/918527018222", icon: "whatsapp" },
