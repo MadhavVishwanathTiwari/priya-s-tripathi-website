@@ -92,7 +92,7 @@ export function Header() {
 
   return (
     <header className="relative z-50 bg-cream-raised">
-      <div className="container-page flex items-center justify-between gap-6 py-4 lg:py-5">
+      <div className="container-page flex items-center justify-between gap-6 py-3 lg:py-5">
         <Logo showTagline />
 
         <nav aria-label="Primary" className="hidden xl:block">
@@ -145,15 +145,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* The consultation CTA stays visible on its own row, as in the mobile reference. */}
-      <div className="border-t border-line-soft/70 bg-cream-raised pb-4 pt-3 md:hidden">
-        <div className="container-page flex justify-center">
-          <Button href="/contact" icon={<CalendarIcon className="h-4 w-4" />}>
-            Book Consultation
-          </Button>
-        </div>
-      </div>
-
       <div
         id="mobile-menu"
         ref={panelRef}
@@ -183,6 +174,22 @@ export function Header() {
               </li>
             ))}
           </ul>
+
+          {/*
+            The CTA used to sit on its own row under the logo, which cost the
+            mobile header half its height. It lives here now: still one tap
+            away on every page, but only while the menu is open. It is inside
+            the panel, so the focus trap above picks it up on its own.
+          */}
+          <div className="flex justify-center py-4">
+            <Button
+              href="/contact"
+              icon={<CalendarIcon className="h-4 w-4" />}
+              onClick={() => setOpen(false)}
+            >
+              Book Consultation
+            </Button>
+          </div>
         </nav>
       </div>
 

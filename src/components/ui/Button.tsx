@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -12,6 +12,8 @@ type ButtonProps = {
   icon?: ReactNode;
   /** Rendered after the label, e.g. an arrow. */
   trailing?: ReactNode;
+  /** For the header menu, which closes itself when the CTA is taken. */
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
 /**
@@ -25,10 +27,12 @@ export function Button({
   className,
   icon,
   trailing,
+  onClick,
 }: ButtonProps) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={cn(
         "group inline-flex min-h-11 items-center justify-center gap-2.5 rounded-full px-6 py-3 text-[0.7rem] font-medium tracked transition-all duration-300 sm:px-7 sm:text-xs",
         variant === "solid"

@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { HeroFeature } from "@/components/hero/HeroFeature";
-import { ArrowRightIcon } from "@/components/icons";
+import { ArrowRightIcon, CalendarIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { DecorativeDivider } from "@/components/ui/DecorativeDivider";
 import { Reveal } from "@/components/ui/Reveal";
@@ -89,9 +89,22 @@ export function Hero() {
                 ))}
               </ul>
 
-              <div className="pb-14 pt-9 lg:pb-0 lg:pt-11">
+              {/*
+                Booking leads, browsing follows. On a phone this is now the main
+                route to the enquiry form: the header no longer carries a CTA
+                row of its own. `flex-wrap` lets the pair stack on a narrow
+                screen rather than overflow.
+              */}
+              <div className="flex flex-wrap items-center gap-3 pb-14 pt-9 lg:pb-0 lg:pt-11">
+                <Button
+                  href="/contact"
+                  icon={<CalendarIcon className="h-4 w-4" />}
+                >
+                  Book a Consultation
+                </Button>
                 <Button
                   href="/#services"
+                  variant="ghost"
                   trailing={<ArrowRightIcon className="h-4 w-4" />}
                 >
                   Explore Services
