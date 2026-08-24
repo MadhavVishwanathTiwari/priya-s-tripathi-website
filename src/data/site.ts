@@ -17,6 +17,13 @@ export const site = {
     */
     phone: "+91 85270 18222",
     phoneHref: "tel:+918527018222",
+    /*
+      A second line, and telephone only. WhatsApp runs on the number above and
+      only on that one, so whatsappHref stays pointed at it: sending anyone to
+      wa.me for this number would open a chat nobody reads.
+    */
+    phoneSecondary: "+91 73036 85550",
+    phoneSecondaryHref: "tel:+917303685550",
     whatsappHref: "https://wa.me/918527018222",
     /** Enquiries. Everything the site links to goes here. */
     email: "consultant@priyastripathi.co.in",

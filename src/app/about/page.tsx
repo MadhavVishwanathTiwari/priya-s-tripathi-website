@@ -163,7 +163,8 @@ export default function AboutPage() {
                 >
                   WhatsApp
                 </a>{" "}
-                or by telephone on {site.contact.phone}.
+                or by telephone on {site.contact.phone} and{" "}
+                {site.contact.phoneSecondary}.
               </p>
 
               <p className="mt-4 text-[0.78rem] text-ink-muted">

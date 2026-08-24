@@ -5,17 +5,37 @@ import Link from "next/link";
 import { GlobeIcon, MailIcon, PhoneIcon, socialIcons } from "@/components/icons";
 import { site } from "@/data/site";
 
+/*
+  Both telephone numbers sit under one icon rather than taking a row each. As
+  four items the strip outgrew its width at 1280 and `break-all` began snapping
+  numbers mid-digit, which is worse than useless on a number someone means to
+  dial. Hence `nowrap` on the numbers too: an address may wrap, a number may not.
+*/
 const contactItems = [
-  { icon: PhoneIcon, label: site.contact.phone, href: site.contact.phoneHref },
+  {
+    icon: PhoneIcon,
+    nowrap: true,
+    links: [
+      { label: site.contact.phone, href: site.contact.phoneHref },
+      {
+        label: site.contact.phoneSecondary,
+        href: site.contact.phoneSecondaryHref,
+      },
+    ],
+  },
   {
     icon: MailIcon,
-    label: site.contact.email,
-    href: `mailto:${site.contact.email}`,
+    nowrap: false,
+    links: [
+      { label: site.contact.email, href: `mailto:${site.contact.email}` },
+    ],
   },
   {
     icon: GlobeIcon,
-    label: site.contact.website,
-    href: site.contact.websiteHref,
+    nowrap: false,
+    links: [
+      { label: site.contact.website, href: site.contact.websiteHref },
+    ],
   },
 ];
 
@@ -51,15 +71,24 @@ export async function Footer() {
       <div className="container-page relative py-12 lg:py-14">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
           <ul className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-9">
-            {contactItems.map(({ icon: Icon, label, href }) => (
-              <li key={label}>
-                <Link
-                  href={href}
-                  className="group -my-2.5 inline-flex items-center gap-3 py-2.5 text-[0.88rem] text-ink-soft transition-colors duration-200 hover:text-gold-deep"
-                >
-                  <Icon className="h-5 w-5 shrink-0 text-gold" />
-                  <span className="break-all">{label}</span>
-                </Link>
+            {contactItems.map(({ icon: Icon, links, nowrap }) => (
+              <li key={links[0].href} className="flex items-center gap-3">
+                <Icon className="h-5 w-5 shrink-0 text-gold" />
+                {/* Negative margin on the wrapper only: on the links it would
+                    overlap their tap areas. See the note on the contact page. */}
+                <span className="-my-2 flex flex-col">
+                  {links.map(({ label, href }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      className="py-2 text-[0.88rem] text-ink-soft transition-colors duration-200 hover:text-gold-deep"
+                    >
+                      <span className={nowrap ? "whitespace-nowrap" : "break-all"}>
+                        {label}
+                      </span>
+                    </Link>
+                  ))}
+                </span>
               </li>
             ))}
           </ul>
