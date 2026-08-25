@@ -19,7 +19,7 @@ export const fees: Fee[] = [
     icon: "/icons/services/vastu.png",
   },
   {
-    service: "VASTU – Kothi / Villa",
+    service: "VASTU – Villa",
     slug: "vastu",
     price: "Up to ₹50,000",
     icon: "/icons/features/harmonize.png",
@@ -33,7 +33,7 @@ export const fees: Fee[] = [
   {
     service: "Numerology Consultation",
     slug: "numerology",
-    price: "Starting ₹11,000",
+    price: "₹11,000 per person",
     icon: "/icons/services/numerology.png",
   },
   {
