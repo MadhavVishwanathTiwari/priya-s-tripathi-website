@@ -5,6 +5,7 @@ import { GlobeIcon, MailIcon, PhoneIcon, socialIcons } from "@/components/icons"
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { EnquiryForm } from "@/components/sections/EnquiryForm";
+import { PaymentQr } from "@/components/sections/PaymentQr";
 import { DecorativeDivider } from "@/components/ui/DecorativeDivider";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -122,7 +123,14 @@ export default function ContactPage() {
         >
           <div className="container-page">
             <div className="grid items-start gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-14">
-              <EnquiryForm />
+              {/* The QR is hers to place and she asked for it here, under the
+                  form. It shares the form's column so it stays subordinate to
+                  it: given its own full-width strip it would read as the point
+                  of the page. */}
+              <div className="flex flex-col gap-8">
+                <EnquiryForm />
+                <PaymentQr />
+              </div>
 
               <div className="flex flex-col gap-5">
                 <div className="overflow-hidden rounded-sm border border-line bg-white p-1.5">

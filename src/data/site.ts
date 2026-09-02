@@ -31,6 +31,23 @@ export const site = {
     websiteHref: "https://www.priyastripathi.co.in",
   },
   /*
+    Her UPI details, at her request, for fees settled after a consultation is
+    agreed. The handle is typed out as well as encoded in the card: a visitor
+    reading this on the phone they would pay from cannot scan their own screen,
+    so entering it by hand is the only route they have.
+  */
+  payment: {
+    upiId: "8527018222@ptyes",
+    /**
+     * The Paytm card she sent, cropped to the card's own blue border. What
+     * she sent was a share sheet, and half of it was white margin and app
+     * logos wrapped around the part that matters.
+     */
+    qr: "/payment-qr.jpeg",
+    qrWidth: 648,
+    qrHeight: 756,
+  },
+  /*
     Where the practice is based. Consultations are remote by default, so
     anything that renders this says "by appointment" in the same breath. Kept to
     society level on purpose: this is a home practice, and the flat number is
