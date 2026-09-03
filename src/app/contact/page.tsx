@@ -25,34 +25,34 @@ export const metadata: Metadata = {
   Plenty of people would simply rather tap a number than fill anything in, and
   these three are the shortest path for them.
 
+  The two numbers are labelled by what each is for, at her request, rather than
+  sitting together under "Telephone": the first line is the one she carries and
+  answers, the second is the one appointments are fixed on.
+
   Everything a visitor reads on this page is in her voice, as the rest of the
   site is, so nothing here refers to her in the third person.
 */
 const channels = [
   {
-    label: "WhatsApp",
-    values: [{ value: site.contact.phone, href: site.contact.whatsappHref }],
+    label: "WhatsApp & Consultation",
+    value: site.contact.phone,
+    href: site.contact.whatsappHref,
     note: "Usually the quickest way to reach me.",
     icon: socialIcons.whatsapp,
     external: true,
   },
   {
-    label: "Telephone",
-    // Two lines, so this card holds its own anchors rather than being one.
-    values: [
-      { value: site.contact.phone, href: site.contact.phoneHref },
-      {
-        value: site.contact.phoneSecondary,
-        href: site.contact.phoneSecondaryHref,
-      },
-    ],
-    note: "Either line. India Standard Time.",
+    label: "Book appointment",
+    value: site.contact.phoneSecondary,
+    href: site.contact.phoneSecondaryHref,
+    note: "Call this line to fix a time. India Standard Time.",
     icon: PhoneIcon,
     external: false,
   },
   {
     label: "Email",
-    values: [{ value: site.contact.email, href: `mailto:${site.contact.email}` }],
+    value: site.contact.email,
+    href: `mailto:${site.contact.email}`,
     note: "Best for detailed enquiries and Vastu plans.",
     icon: MailIcon,
     external: false,
@@ -181,68 +181,40 @@ export default function ContactPage() {
             </SectionHeading>
 
             <div className="mt-9 grid gap-4 sm:grid-cols-3 lg:mt-11 lg:gap-5">
-              {channels.map(({ label, values, note, icon: Icon, external }, index) => {
+              {channels.map(({ label, value, href, note, icon: Icon, external }, index) => {
                 const outward = external
                   ? { target: "_blank", rel: "noopener noreferrer" }
                   : {};
                 const tint = index % 2 === 0 ? "bg-card-cream" : "bg-card-rose";
-                const card =
-                  "group flex h-full flex-col rounded-sm border border-transparent p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/25 " +
-                  tint;
-
-                const heading = (
-                  <span className="flex items-center gap-3">
-                    <Icon className="h-5 w-5 shrink-0 text-gold transition-colors duration-200 group-hover:text-gold-deep" />
-                    <span className="text-[0.62rem] tracked text-gold-deep/80">
-                      {label}
-                    </span>
-                  </span>
-                );
-
-                /* Inter rather than the serif: a phone number and an email
-                   address are data, and the display face renders them as small
-                   caps and breaks the domain mid-word. */
-                const line = "mt-4 block break-all text-[0.9rem] text-ink";
-                const footnote = (
-                  <span className="mt-2 block text-[0.8rem] text-ink-muted">
-                    {note}
-                  </span>
-                );
 
                 return (
                   <Reveal key={label} delay={index * 70}>
-                    {values.length === 1 ? (
-                      <a href={values[0].href} {...outward} className={card}>
-                        {heading}
-                        <span className={line}>{values[0].value}</span>
-                        {footnote}
-                      </a>
-                    ) : (
-                      /* Two numbers cannot live in one anchor, so each gets its
-                         own. Both stay tappable, which is the point of putting
-                         a phone number on a page at all. */
-                      <div className={card}>
-                        {heading}
-                        {/* The negative margin belongs to the wrapper, not to
-                            each link. On the links it would pull one tap area
-                            into the next, and a tap near the join would dial
-                            the wrong number. Here it only trims the group's
-                            outer edge, so the first line still sits level with
-                            the cards either side. */}
-                        <span className={`${line} -my-2 flex flex-col`}>
-                          {values.map(({ value, href }) => (
-                            <a
-                              key={href}
-                              className="block py-2 transition-colors duration-200 hover:text-gold-deep"
-                              href={href}
-                            >
-                              {value}
-                            </a>
-                          ))}
+                    <a
+                      href={href}
+                      {...outward}
+                      className={
+                        "group flex h-full flex-col rounded-sm border border-transparent p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/25 " +
+                        tint
+                      }
+                    >
+                      <span className="flex items-center gap-3">
+                        <Icon className="h-5 w-5 shrink-0 text-gold transition-colors duration-200 group-hover:text-gold-deep" />
+                        <span className="text-[0.62rem] tracked text-gold-deep/80">
+                          {label}
                         </span>
-                        {footnote}
-                      </div>
-                    )}
+                      </span>
+
+                      {/* Inter rather than the serif: a phone number and an
+                          email address are data, and the display face renders
+                          them as small caps and breaks the domain mid-word. */}
+                      <span className="mt-4 block break-all text-[0.9rem] text-ink">
+                        {value}
+                      </span>
+
+                      <span className="mt-2 block text-[0.8rem] text-ink-muted">
+                        {note}
+                      </span>
+                    </a>
                   </Reveal>
                 );
               })}

@@ -76,14 +76,19 @@ export default function AboutPage() {
                 className="mb-8 md:float-right md:mb-6 md:ml-10 md:w-[19rem]"
               />
 
+              {/*
+                One face, one size, one colour, all the way down. The opening
+                paragraph used to be set in the display serif as a lede, which
+                read on the page as a different typeface from the body copy
+                every other page uses. She asked for it to match, so these are
+                the same measurements as the About band on the home page.
+              */}
               {story.map((paragraph, index) => (
                 <p
                   key={paragraph.slice(0, 40)}
-                  className={
-                    index === 0
-                      ? "text-pretty font-serif text-[clamp(1.05rem,1.9vw,1.2rem)] font-light leading-relaxed text-ink"
-                      : "mt-5 text-pretty text-[0.97rem] leading-[1.85] text-ink-soft"
-                  }
+                  className={`text-pretty text-[0.92rem] leading-[1.85] text-ink-soft${
+                    index === 0 ? "" : " mt-5"
+                  }`}
                 >
                   {paragraph}
                 </p>
